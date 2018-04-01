@@ -15,23 +15,42 @@ import finstream.utils._
 
 class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLevel.MEMORY_AND_DISK_2) with Logging {
 
+	//var thread: Thread = null
+	var stopThread: Boolean = false
 	// Overridden method to start the thread for fetching the pages
 	def onStart() {
-		new Thread("Fetcher") {
-			override def run() { fetch() }
-		}.start()
+		val thread = new Thread("Fetcher") {
+			override def run() { 
+				while(!stopThread) {
+					try {
+							
+						println("Thread running")
+						fetch()
+						println("sleeping ...")
+						Thread.sleep(5 * 60 * 1000)
+					} catch {
+						case ex: Exception => {throw new RuntimeException(ex)}
+					}
+				}
+			}
+		}
+		thread.start()
 	}
 
 	// Overridden method to stop receiving the data
 	def onStop() {
 		// Currently not doing anything.
+		stopThread = true
+		println("onStop() called ")
+		stop("Stop for this interval")
 	}
 
 	// Fetch the list of URLs and store the webpages in memory
 	private def fetch() {
 		var bufferedSource: scala.io.BufferedSource = null
-		while(!isStopped) {
+		//while(!isStopped) {
 		for(url <- urlList; if UtilMethods.isValidUrl(url)) {
+			println("fetching " + url)
 			try {
 				// Establish the connection
 				val connect = new URL(url)
@@ -41,7 +60,7 @@ class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLe
 				val contentType = connection.getContentType
 				// Get the response
 				bufferedSource = scala.io.Source.fromInputStream(connection.getInputStream)
-				val response = bufferedSource.getLines.mkString
+				var response = bufferedSource.getLines.mkString
 				if(contentType != null && response != null) {
 					store(FetcherResponse(contentType, response))
 				}
@@ -53,7 +72,11 @@ class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLe
 			} finally {
 				if(bufferedSource != null) bufferedSource.close()
 			}
+			//Thread.sleep(10 * 1000)
 		}
-		}
+		//stop("Stop for this interval")
+
+		//}
+		//restart("Fetching again")
 	}
 }

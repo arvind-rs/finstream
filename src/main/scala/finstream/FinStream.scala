@@ -14,21 +14,23 @@ import finstream.receivers._
 
 object FinStream {
 
-	val urlList = List("https://www.google.com/search?q=FB", "https://www.google.com/search?q=AMZN")
+	val urlList = List("https://www.google.com/search?q=FB", "https://www.google.com/search?q=AMZN",
+		"https://www.google.com/search?q=GOOG")
+	//val urlList = List("https://www.google.com/search?q=FB")
 
 	def main(args: Array[String]) {
 
 		Logger.getLogger("org").setLevel(Level.ERROR)
 
 		val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Test")
-		val ssc = new StreamingContext(sparkConf, Seconds(10))
+		val ssc = new StreamingContext(sparkConf, Seconds(5 * 60))
 
 		val fetcherService = ssc.receiverStream(new Fetcher(urlList))
 
 		//fetcherService.saveAsTextFiles("output/test1","")
 
-		fetcherService.print()
-
+		//fetcherService.map(_.contentType).print()
+		fetcherService.map(x => (x.contentType, 1)).reduceByKey(_ + _).print()
 		/*val lines = ssc.socketTextStream("localhost",9999)
 
 		val words = lines.flatMap(_.split(" "))
