@@ -23,11 +23,11 @@ class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLe
 			override def run() { 
 				while(!stopThread) {
 					try {
-							
+						println("sleeping ...")
+						
 						println("Thread running")
 						fetch()
-						println("sleeping ...")
-						Thread.sleep(5 * 60 * 1000)
+						Thread.sleep(60 * 1000)
 					} catch {
 						case ex: Exception => {throw new RuntimeException(ex)}
 					}
