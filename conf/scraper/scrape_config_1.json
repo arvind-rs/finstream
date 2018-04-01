@@ -1,0 +1,16 @@
+{
+	"config": {
+		"use_cases": ["google_finance"],
+		"google_finance": {
+			"classifier": "//input[@class='lst lst-tbb sbibps']//@value",
+			"xpath_list": {
+				"ticker": "//input[@class='lst lst-tbb sbibps']//@value",
+				"price": "//span[@class='W0pUAc fmob_pr fac-l']",
+				"market_cap": "substring-before((//div[@class='uD7A3c gRmrbb vk_txt vk_gy']//td[@class='YcIftf']//text())[1],'B')",
+				"ltt": "(//span[@class='fac-tsv fac-lt']//text())[1]",
+				"exchange": "substring-before(substring-after(//script[contains(.,'exchs:[')],&quot;exchs:['&quot;),&quot;'&quot;)"
+			},
+			"normalizers": {}
+		}
+	}
+}
