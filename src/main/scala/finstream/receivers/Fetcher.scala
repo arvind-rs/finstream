@@ -15,19 +15,17 @@ import finstream.utils._
 
 class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLevel.MEMORY_AND_DISK_2) with Logging {
 
-	//var thread: Thread = null
+	val intervalWindowMinutes = 1
 	var stopThread: Boolean = false
 	// Overridden method to start the thread for fetching the pages
 	def onStart() {
 		val thread = new Thread("Fetcher") {
 			override def run() { 
 				while(!stopThread) {
-					try {
-						println("sleeping ...")
-						
+					try {						
 						println("Thread running")
 						fetch()
-						Thread.sleep(60 * 1000)
+						Thread.sleep(intervalWindowMinutes * 60 * 1000)
 					} catch {
 						case ex: Exception => {throw new RuntimeException(ex)}
 					}
@@ -41,7 +39,6 @@ class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLe
 	def onStop() {
 		// Currently not doing anything.
 		stopThread = true
-		println("onStop() called ")
 		stop("Stop for this interval")
 	}
 
@@ -65,18 +62,13 @@ class Fetcher(urlList: List[String]) extends Receiver[FetcherResponse](StorageLe
 					store(FetcherResponse(contentType, response))
 				}
 			} catch {
-				case ex: Exception => { 
+				case ex: RuntimeException => { 
 					println(ex)
 					restart(ex.getMessage) 
 				}
 			} finally {
 				if(bufferedSource != null) bufferedSource.close()
 			}
-			//Thread.sleep(10 * 1000)
 		}
-		//stop("Stop for this interval")
-
-		//}
-		//restart("Fetching again")
 	}
 }

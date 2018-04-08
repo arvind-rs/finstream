@@ -3,7 +3,7 @@ package finstream.scraper
 /*
  * Scraper implementation to scrape content from HTML and JSON strings.
  * @author: arvind-rs
- * @date: 04/01/2018
+ * @date: 04/02/2018
  */
 
 
@@ -21,7 +21,6 @@ object Scraper {
     val cleaner = new HtmlCleaner()
 
 	def scrapeHTML(htmlPage: String, scrapeConfig: ScrapeConfig): HTMLParserResponse = {
-		println("scrapeHTML")
 
     	// Create a ListBuffer to store the scraped data
     	val htmlScrapeDataList = new ListBuffer[HTMLScrapeData]
@@ -50,7 +49,6 @@ object Scraper {
         		// If the classifier matches, extract the data for each datapoint
         		val dataPoint = xpathMap.name.toString()
         		val xpathString = xpathMap.xpath.replaceAll("&quot;","\"")
-        		//println(xpathString)
         		val nodes = xpath.evaluate(xpathString, doc)
         		val data = nodes.toString().trim()
         
