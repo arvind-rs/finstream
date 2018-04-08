@@ -8,12 +8,6 @@
 
 /*
  * Things to do:
- * 1. Build Fetcher Receiver X
- * 2. Retrofit the scraper code to work with FinStream X
- * 3. Add capabilities to crawl and scrape JSON data from APIs X
- * 4. Transform the data into DataFrames X
- * 5. Add MySQL db connections X
- * 6. Write the data to the MySQL tables X
  * 7. Add application level logs
  * 8. Add Configuration files
  */
